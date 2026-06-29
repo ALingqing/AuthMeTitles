@@ -34,7 +34,7 @@ public class PlayerJoinListener implements Listener {
                 if(VersionUtils.isAtLeastVersion19()) BossBar19Handler.handle(p, "noLogin");
                 else BossBar18Handler.handle(p, "noLogin");
             }
-        }, 20L);
+        }, 21L);
 
     }
 

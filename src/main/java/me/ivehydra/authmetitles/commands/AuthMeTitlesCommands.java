@@ -19,26 +19,33 @@ public class AuthMeTitlesCommands implements CommandExecutor {
             boolean isPlayer = sender instanceof Player;
             Player p = isPlayer ? (Player) sender : null;
 
-            if(args.length == 0 || (args.length == 1 && args[0].equalsIgnoreCase("help"))) {
-                if(isPlayer && !p.hasPermission("authmetitles.help"))
-                    sendNoHelp(p);
-                else
-                    sendHelp(sender);
-                return true;
-            }
-
-            if(args.length == 1 && (args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("rl"))) {
-                if(isPlayer && !p.hasPermission("authmetitles.reload")) {
-                    p.sendMessage(MessageUtils.NO_PERMISSION.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+            switch(args.length) {
+                case 0:
+                    if(isPlayer && !p.hasPermission("authmetitles.help"))
+                        sendNoHelp(p);
+                    else
+                        sendHelp(sender);
                     return true;
-                }
-                instance.reloadConfig();
-                sender.sendMessage(MessageUtils.CONFIG_RELOADED.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
-                return true;
+                case 1:
+                    if(args[0].equalsIgnoreCase("help")) {
+                        if(isPlayer && !p.hasPermission("authmetitles.help"))
+                            sendNoHelp(p);
+                        else
+                            sendHelp(sender);
+                    } else if(args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("rl")) {
+                        if(isPlayer && !p.hasPermission("authmetitles.reload")) {
+                            p.sendMessage(MessageUtils.NO_PERMISSION.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+                            return true;
+                        }
+                        instance.reloadConfig();
+                        sender.sendMessage(MessageUtils.CONFIG_RELOADED.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+                        return true;
+                    }
+                    return true;
+                default:
+                    sender.sendMessage(MessageUtils.WRONG_ARGUMENTS.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
+                    return true;
             }
-
-            sender.sendMessage(MessageUtils.WRONG_ARGUMENTS.getFormattedMessage("%prefix%", MessageUtils.PREFIX.toString()));
-            return true;
         }
         return true;
     }
