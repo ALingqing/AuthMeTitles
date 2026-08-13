@@ -33,25 +33,31 @@ public class BossBarUtils {
     private static Constructor<?> packetPlayOutEntityMetadata;
 
     static {
-        try {
-            packetPlayOutSpawnEntityLiving = getNMSClass("PacketPlayOutSpawnEntityLiving").getConstructor(getNMSClass("EntityLiving"));
-            packetPlayOutEntityDestroy = getNMSClass("PacketPlayOutEntityDestroy").getDeclaredConstructor(int[].class);
-            entityWither = getNMSClass("EntityWither").getConstructor(getNMSClass("World"));
-            getId = getNMSClass("Entity").getMethod("getId");
-            setLocation = getNMSClass("EntityWither").getMethod("setLocation", double.class, double.class, double.class, float.class, float.class);
-            setCustomName = getNMSClass("EntityWither").getMethod("setCustomName", String.class);
-            setHealth = getNMSClass("EntityWither").getMethod("setHealth", float.class);
-            setInvisible = getNMSClass("EntityWither").getMethod("setInvisible", boolean.class);
-            getWorldHandle = getBukkitClass("CraftWorld").getMethod("getHandle");
-            getPlayerHandle = getBukkitClass("entity.CraftPlayer").getMethod("getHandle");
-            playerConnection = getNMSClass("EntityPlayer").getDeclaredField("playerConnection");
-            sendPacket = getNMSClass("PlayerConnection").getMethod("sendPacket", getNMSClass("Packet"));
-            getDataWatcher = getNMSClass("EntityWither").getMethod("getDataWatcher");
-            packetPlayOutEntityTeleport = getNMSClass("PacketPlayOutEntityTeleport").getConstructor(getNMSClass("Entity"));
-            packetPlayOutEntityMetadata = getNMSClass("PacketPlayOutEntityMetadata").getConstructor(int.class, getNMSClass("DataWatcher"), boolean.class);
-        } catch(Exception e) {
-            instance.sendLog("[AuthMeTitles]" + ChatColor.RED + " An error occurred while sending packets: " + e.getMessage());
-        }
+        // The legacy NMS reflection based Wither boss bar is only needed on servers older than 1.9.
+        // On Paper 26.x the CraftBukkit package no longer has a versioned suffix (e.g. org.bukkit.craftbukkit.v1_XX_RX)
+        // and NMS classes have moved to the Mojang namespace, so this whole reflection block would fail
+        // (ArrayIndexOutOfBoundsException). Since servers >= 1.9 use the Bukkit BossBar API instead,
+        // we skip the initialization entirely on those versions.
+        if(!VersionUtils.isAtLeastVersion19())
+            try {
+                packetPlayOutSpawnEntityLiving = getNMSClass("PacketPlayOutSpawnEntityLiving").getConstructor(getNMSClass("EntityLiving"));
+                packetPlayOutEntityDestroy = getNMSClass("PacketPlayOutEntityDestroy").getDeclaredConstructor(int[].class);
+                entityWither = getNMSClass("EntityWither").getConstructor(getNMSClass("World"));
+                getId = getNMSClass("Entity").getMethod("getId");
+                setLocation = getNMSClass("EntityWither").getMethod("setLocation", double.class, double.class, double.class, float.class, float.class);
+                setCustomName = getNMSClass("EntityWither").getMethod("setCustomName", String.class);
+                setHealth = getNMSClass("EntityWither").getMethod("setHealth", float.class);
+                setInvisible = getNMSClass("EntityWither").getMethod("setInvisible", boolean.class);
+                getWorldHandle = getBukkitClass("CraftWorld").getMethod("getHandle");
+                getPlayerHandle = getBukkitClass("entity.CraftPlayer").getMethod("getHandle");
+                playerConnection = getNMSClass("EntityPlayer").getDeclaredField("playerConnection");
+                sendPacket = getNMSClass("PlayerConnection").getMethod("sendPacket", getNMSClass("Packet"));
+                getDataWatcher = getNMSClass("EntityWither").getMethod("getDataWatcher");
+                packetPlayOutEntityTeleport = getNMSClass("PacketPlayOutEntityTeleport").getConstructor(getNMSClass("Entity"));
+                packetPlayOutEntityMetadata = getNMSClass("PacketPlayOutEntityMetadata").getConstructor(int.class, getNMSClass("DataWatcher"), boolean.class);
+            } catch(Exception e) {
+                instance.sendLog("[AuthMeTitles]" + ChatColor.RED + " An error occurred while sending packets: " + e.getMessage());
+            }
     }
 
     public static void addWither(Player p, String text, float health) {

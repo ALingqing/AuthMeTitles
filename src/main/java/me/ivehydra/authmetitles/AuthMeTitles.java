@@ -109,8 +109,8 @@ public class AuthMeTitles extends JavaPlugin {
     private void updateChecker(Consumer<String> consumer) {
         if(!instance.getConfig().getBoolean("updateCheck")) return;
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            try(InputStream stream = new URL("https://api.spigotmc.org/legacy/update.php?resource=111370").openStream()) {
-                Scanner scanner = new Scanner(stream);
+            try(InputStream stream = new URL("https://api.spigotmc.org/legacy/update.php?resource=111370").openStream();
+                Scanner scanner = new Scanner(stream)) {
                 if(scanner.hasNext()) {
                     String version = scanner.next();
                     latestVersion = version;

@@ -6,4 +6,4 @@
 
 # More Details
 
-https://www.spigotmc.org/resources/authmetitles-1-8-1-21-11-sounds-titles-animated-titles-actionbars-bossbars.111370/
+https://www.spigotmc.org/resources/authmetitles-1-8-1-21-11-sounds-titles-animated-titles-actionbars-bossbars.111370/          
